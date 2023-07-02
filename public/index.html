@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Streaming</title>
+    <style>
+        #video-container {
+            width: 640px;
+            height: 480px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="video-container">
+        <video id="video-player" controls></video>
+    </div>
+
+    <script>
+        const videoPlayer = document.getElementById('video-player');
+
+        // WebSocket 연결
+        const ws = new WebSocket('ws://localhost:3000/ws');
+
+        // WebSocket 이벤트 리스너
+        ws.onopen = function(event) {
+            console.log('WebSocket connection opened');
+        };
+
+        ws.onmessage = function(event) {
+            // 서버로부터 동영상 데이터 수신 시 처리
+            const data = event.data;
+            const videoBlob = new Blob([data], { type: 'video/mp4' });
+            const videoUrl = URL.createObjectURL(videoBlob);
+            videoPlayer.src = videoUrl;
+        };
+
+        ws.onclose = function(event) {
+            console.log('WebSocket connection closed');
+        };
+    </script>
+</body>
+</html>
